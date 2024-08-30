@@ -67,6 +67,29 @@ tenants:
     vrfs:
       # VRF definitions inside the tenant.
       - name: PROD
+
+        # List of BGP peer definitions.
+        # This will configure BGP neighbors inside the tenant VRF for peering with external devices.
+        # The configured peer will automatically be activated for ipv4 or ipv6 address family based on the ip address.
+        # Note, only ipv4 and ipv6 address families are currently supported in eos_designs.
+        # For other address families, use custom_structured configuration with eos_cli_config_gen.
+        bgp_peers:
+            # IPv4_address or IPv6_address.
+          - ip_address: 10.254.255.1
+            # Peer group name.
+            peer_group: PROD-PALO
+            # BGP AS <1-4294967295> or AS number in asdot notation "<1-65535>.<0-65535>".
+            # For asdot notation in YAML inputs, the value must be put in quotes, to prevent it from being interpreted as a float number.
+            remote_as: 64512
+            description: Palo Alto Firewall
+            update_source: loopback10
+
+
+            # Nodes is required to restrict configuration of BGP neighbors to certain nodes in the network.
+            nodes:
+              - dc1-leaf2a
+
+
         # VRF VNI definition.
         vrf_vni: 10
         # Enable VTEP Network diagnostics
@@ -101,11 +124,7 @@ tenants:
             name: PROD_FW_TRANSIT
             enabled: true
             ip_address_virtual: 10.254.254.1/24
-        bgp_peers:
-          ip_address: 10.254.255.1
-          peer_group: PROD-PALO
-          local_as: 65000
-          update_source: loopback10
+
 
     l2vlans:
       # These are pure L2 vlans. They do not have a SVI defined in the l3leafs and they will be bridged inside the VXLAN fabric
@@ -120,6 +139,24 @@ tenants:
     vrfs:
       # VRF definitions inside the tenant.
       - name: QA
+
+        bgp_peers:
+            # IPv4_address or IPv6_address.
+          - ip_address: 10.254.255.1
+            # Peer group name.
+            peer_group: QA-PALO
+            # BGP AS <1-4294967295> or AS number in asdot notation "<1-65535>.<0-65535>".
+            # For asdot notation in YAML inputs, the value must be put in quotes, to prevent it from being interpreted as a float number.
+            remote_as: 64512
+            description: Palo Alto Firewall
+            update_source: loopback12
+
+
+            # Nodes is required to restrict configuration of BGP neighbors to certain nodes in the network.
+            nodes:
+              - dc1-leaf2a
+
+
         # VRF VNI definition.
         vrf_vni: 12
         # Enable VTEP Network diagnostics

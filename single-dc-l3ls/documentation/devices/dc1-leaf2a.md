@@ -932,7 +932,9 @@ ASN Notation: asplain
 | 10.255.255.8 | 65100 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - | - |
 | 10.255.255.10 | 65100 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - | - |
 | 10.255.1.101 | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | PROD | - | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | - | - | - | - | - | - |
+| 10.254.255.1 | 64512 | PROD | - | Inherited from peer group PROD-PALO | Inherited from peer group PROD-PALO | - | - | - | - | - | - |
 | 10.255.1.101 | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | QA | - | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | - | - | - | - | - | - |
+| 10.254.255.1 | 64512 | QA | - | Inherited from peer group QA-PALO | Inherited from peer group QA-PALO | - | - | - | - | - | - |
 | 10.255.1.101 | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | SHAREDSVCS | - | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | Inherited from peer group MLAG-IPv4-UNDERLAY-PEER | - | - | - | - | - | - |
 
 #### Router BGP EVPN Address Family
@@ -1154,16 +1156,30 @@ router bgp 65102
       route-target import evpn 10:10
       route-target export evpn 10:10
       router-id 10.255.0.5
+      neighbor 10.254.255.1 remote-as 64512
+      neighbor 10.254.255.1 peer group PROD-PALO
+      neighbor 10.254.255.1 description Palo Alto Firewall
+      neighbor 10.254.255.1 update-source loopback10
       neighbor 10.255.1.101 peer group MLAG-IPv4-UNDERLAY-PEER
       redistribute connected
+      !
+      address-family ipv4
+         neighbor 10.254.255.1 activate
    !
    vrf QA
       rd 10.255.0.5:12
       route-target import evpn 12:12
       route-target export evpn 12:12
       router-id 10.255.0.5
+      neighbor 10.254.255.1 remote-as 64512
+      neighbor 10.254.255.1 peer group QA-PALO
+      neighbor 10.254.255.1 description Palo Alto Firewall
+      neighbor 10.254.255.1 update-source loopback12
       neighbor 10.255.1.101 peer group MLAG-IPv4-UNDERLAY-PEER
       redistribute connected
+      !
+      address-family ipv4
+         neighbor 10.254.255.1 activate
    !
    vrf SHAREDSVCS
       rd 10.255.0.5:14

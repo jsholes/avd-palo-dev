@@ -112,6 +112,15 @@ router_bgp:
     neighbors:
     - ip_address: 10.255.1.101
       peer_group: MLAG-IPv4-UNDERLAY-PEER
+    - ip_address: 10.254.255.1
+      peer_group: PROD-PALO
+      remote_as: '64512'
+      description: Palo Alto Firewall
+      update_source: loopback10
+    address_family_ipv4:
+      neighbors:
+      - ip_address: 10.254.255.1
+        activate: true
   - name: QA
     router_id: 10.255.0.5
     rd: 10.255.0.5:12
@@ -129,6 +138,15 @@ router_bgp:
     neighbors:
     - ip_address: 10.255.1.101
       peer_group: MLAG-IPv4-UNDERLAY-PEER
+    - ip_address: 10.254.255.1
+      peer_group: QA-PALO
+      remote_as: '64512'
+      description: Palo Alto Firewall
+      update_source: loopback12
+    address_family_ipv4:
+      neighbors:
+      - ip_address: 10.254.255.1
+        activate: true
   - name: SHAREDSVCS
     router_id: 10.255.0.5
     rd: 10.255.0.5:14
