@@ -4,61 +4,19 @@ tenants:
   - name: PROD
     # Number used to generate the VNI of each VLAN by adding the VLAN number in this tenant.
     mac_vrf_vni_base: 10000
-
     # List of BGP peer groups definitions.
     # This will configure BGP peer groups to be used inside the tenant VRF for peering with external devices.
     # Since BGP peer groups are configured at higher BGP level, shared between VRFs,
     # peer_group names should not overlap between VRFs.
     bgp_peer_groups:
-
         # BGP peer group name.
       - name: PROD-PALO
-
         # Nodes is required to restrict configuration of BGP neighbors to certain nodes in the network.
         # If not set the peer-group is created on devices which have a bgp_peer mapped to the corresponding peer_group.
         nodes:
           - dc1-leaf2a
         address_family_ipv4:
           activate: true
-
-          # # Inbound route-map name.
-          # route_map_in: <str>
-
-          # # Outbound route-map name.
-          # route_map_out: <str>
-          # default_originate:
-          #   always: <bool>
-
-          #   # Route-map name.
-          #   route_map: <str>
-          # next_hop:
-        #     address_family_ipv6:
-        #       enabled: <bool; required>
-        #       originate: <bool>
-        #     # This key is deprecated.
-        #     # Support will be removed in AVD version 5.0.0.
-        #     # Use <samp>address_family_ipv6</samp> instead.
-        #     address_family_ipv6_originate: <bool>
-
-        #   # Inbound prefix-list name.
-        #   prefix_list_in: <str>
-
-        #   # Outbound prefix-list name.
-        #   prefix_list_out: <str>
-        # address_family_ipv6:
-        #   activate: <bool>
-
-          # Inbound route-map name.
-          route_map_in: <str>
-
-          # Outbound route-map name.
-          route_map_out: <str>
-
-          # Inbound prefix-list name.
-          prefix_list_in: <str>
-
-          # Outbound prefix-list name.
-          prefix_list_out: <str>
 
         # Key only used for documentation or validation purposes.
         type: Inter-VRF Inspection
@@ -72,68 +30,39 @@ tenants:
         local_as: 65000
         description: VRF-PROD ASN
         shutdown: false
-        # BGP AS-PATH options.
-        # as_path:
-
-          # Replace AS number with local AS number.
-          remote_as_replace_out: true
-
-        #   # Disable prepending own AS number to AS path.
-        #   prepend_own_disabled: <bool>
-
-        # # Remove private AS numbers in outbound AS path.
-        # remove_private_as:
-        #   enabled: <bool>
-        #   all: <bool>
-        #   replace_as: <bool>
-        # remove_private_as_ingress:
-        #   enabled: <bool>
-        #   replace_as: <bool>
-
-        # # Peer-filter name.
-        # # note: `bgp_listen_range_prefix` and `peer_filter` should not be mixed with
-        # # the new `listen_ranges` key above to avoid conflicts.
-        # # This key is deprecated.
-        # # Support will be removed in AVD version 5.0.0.
-        # # Use <samp>listen_ranges</samp> instead.
-        # peer_filter: <str>
-        # next_hop_unchanged: <bool>
-
-        # # IP address or interface name.
-        # update_source: <str>
-        # route_reflector_client: <bool>
-
-        # # Enable BFD.
-        # bfd: <bool>
-
-        # # Override default BFD timers. BFD must be enabled with `bfd: true`.
-        # bfd_timers:
-
-        #   # Interval in milliseconds.
-        #   interval: <int; 50-60000; required>
-
-        #   # Rate in milliseconds.
-        #   min_rx: <int; 50-60000; required>
-        #   multiplier: <int; 3-50; required>
-
         # Time-to-live in range of hops.
         ebgp_multihop: 3
-        # next_hop_self: <bool>
-        # password: <str>
-        # passive: <bool>
-        # default_originate:
-        #   enabled: <bool>
-        #   always: <bool>
-
-        #   # Route-map name.
-        #   route_map: <str>
-
         # 'all' or a combination of 'standard', 'extended', 'large' and 'link-bandwidth (w/options)'.
         send_community: all
-
         # Maximum number of routes (0 means unlimited).
         maximum_routes: 12000
 
+      - name: QA-PALO
+        # Nodes is required to restrict configuration of BGP neighbors to certain nodes in the network.
+        # If not set the peer-group is created on devices which have a bgp_peer mapped to the corresponding peer_group.
+        nodes:
+          - dc1-leaf2a
+        address_family_ipv4:
+          activate: true
+
+        # Key only used for documentation or validation purposes.
+        type: Inter-VRF Inspection
+
+        # BGP AS <1-4294967295> or AS number in asdot notation "<1-65535>.<0-65535>".
+        # For asdot notation in YAML inputs, the value must be put in quotes, to prevent it from being interpreted as a float number.
+        remote_as: 64512
+
+        # BGP AS <1-4294967295> or AS number in asdot notation "<1-65535>.<0-65535>".
+        # For asdot notation in YAML inputs, the value must be put in quotes, to prevent it from being interpreted as a float number.
+        local_as: 65001
+        description: VRF-QA ASN
+        shutdown: false
+        # Time-to-live in range of hops.
+        ebgp_multihop: 3
+        # 'all' or a combination of 'standard', 'extended', 'large' and 'link-bandwidth (w/options)'.
+        send_community: all
+        # Maximum number of routes (0 means unlimited).
+        maximum_routes: 12000
 
     vrfs:
       # VRF definitions inside the tenant.

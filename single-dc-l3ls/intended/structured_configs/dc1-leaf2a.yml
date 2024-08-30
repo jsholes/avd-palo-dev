@@ -33,10 +33,23 @@ router_bgp:
     maximum_routes: 0
     ebgp_multihop: 3
   - name: PROD-PALO
-    remote-as: 64512
+    type: Inter-VRF Inspection
+    remote_as: '64512'
+    local_as: '65000'
+    description: VRF-PROD ASN
+    shutdown: false
+    ebgp_multihop: 3
     send_community: all
     maximum_routes: 12000
+  - name: QA-PALO
+    type: Inter-VRF Inspection
+    remote_as: '64512'
+    local_as: '65001'
+    description: VRF-QA ASN
+    shutdown: false
     ebgp_multihop: 3
+    send_community: all
+    maximum_routes: 12000
   address_family_ipv4:
     peer_groups:
     - name: MLAG-IPv4-UNDERLAY-PEER
@@ -46,6 +59,8 @@ router_bgp:
     - name: EVPN-OVERLAY-PEERS
       activate: false
     - name: PROD-PALO
+      activate: true
+    - name: QA-PALO
       activate: true
   neighbors:
   - ip_address: 10.255.1.101
