@@ -69,6 +69,11 @@ tenants:
       # VRF definitions inside the tenant.
       - name: PROD
 
+        static_routes:
+          - destination_address_prefix: 10.254.255.1/32
+            gateway: 10.254.254.2
+
+
         # List of BGP peer definitions.
         # This will configure BGP neighbors inside the tenant VRF for peering with external devices.
         # The configured peer will automatically be activated for ipv4 or ipv6 address family based on the ip address.
@@ -89,7 +94,6 @@ tenants:
             # Nodes is required to restrict configuration of BGP neighbors to certain nodes in the network.
             nodes:
               - dc1-leaf2a
-
 
         # VRF VNI definition.
         vrf_vni: 10
@@ -140,6 +144,10 @@ tenants:
     vrfs:
       # VRF definitions inside the tenant.
       - name: QA
+
+        static_routes:
+          - destination_address_prefix: 10.254.255.1/32
+            gateway: 10.254.253.2
 
         bgp_peers:
             # IPv4_address or IPv6_address.
@@ -247,5 +255,4 @@ tenants:
         name: L2_VLAN3405
       - id: 3406
         name: L2_VLAN3406
-
 

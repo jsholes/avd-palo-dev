@@ -107,7 +107,7 @@ l3leaf:
           mgmt_ip: 172.16.1.104/24
           uplink_switch_interfaces:
             - Ethernet4
-            - Ethernet4
+            - Ethernet4 
 
 
 # L2 Leaf switch group

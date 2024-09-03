@@ -979,8 +979,8 @@ ASN Notation: asplain
 
 | VRF | Route-Distinguisher | Redistribute |
 | --- | ------------------- | ------------ |
-| PROD | 10.255.0.5:10 | connected |
-| QA | 10.255.0.5:12 | connected |
+| PROD | 10.255.0.5:10 | connected<br>static |
+| QA | 10.255.0.5:12 | connected<br>static |
 | SHAREDSVCS | 10.255.0.5:14 | connected |
 
 #### Router BGP Device Configuration
@@ -1166,6 +1166,7 @@ router bgp 65102
       neighbor 10.254.255.1 update-source loopback10
       neighbor 10.255.1.101 peer group MLAG-IPv4-UNDERLAY-PEER
       redistribute connected
+      redistribute static
       !
       address-family ipv4
          neighbor 10.254.255.1 activate
@@ -1181,6 +1182,7 @@ router bgp 65102
       neighbor 10.254.255.1 update-source loopback12
       neighbor 10.255.1.101 peer group MLAG-IPv4-UNDERLAY-PEER
       redistribute connected
+      redistribute static
       !
       address-family ipv4
          neighbor 10.254.255.1 activate

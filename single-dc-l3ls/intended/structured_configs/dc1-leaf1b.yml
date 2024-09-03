@@ -87,6 +87,7 @@ router_bgp:
         - '10:10'
     redistribute_routes:
     - source_protocol: connected
+    - source_protocol: static
     neighbors:
     - ip_address: 10.255.1.96
       peer_group: MLAG-IPv4-UNDERLAY-PEER
@@ -104,6 +105,7 @@ router_bgp:
         - '12:12'
     redistribute_routes:
     - source_protocol: connected
+    - source_protocol: static
     neighbors:
     - ip_address: 10.255.1.96
       peer_group: MLAG-IPv4-UNDERLAY-PEER
@@ -297,12 +299,12 @@ static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
   gateway: 172.16.1.1
-- vrf: PROD
-  destination_address_prefix: 10.254.255.1/32
+- destination_address_prefix: 10.254.255.1/32
   gateway: 10.254.254.2
-- vrf: QA
-  destination_address_prefix: 10.254.255.1/32
+  vrf: PROD
+- destination_address_prefix: 10.254.255.1/32
   gateway: 10.254.253.2
+  vrf: QA
 service_routing_protocols_model: multi-agent
 ip_routing: true
 daemon_terminattr:

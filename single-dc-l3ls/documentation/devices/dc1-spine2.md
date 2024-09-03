@@ -319,16 +319,12 @@ no ip routing vrf MGMT
 | VRF | Destination Prefix | Next Hop IP | Exit interface | Administrative Distance | Tag | Route Name | Metric |
 | --- | ------------------ | ----------- | -------------- | ----------------------- | --- | ---------- | ------ |
 | MGMT | 0.0.0.0/0 | 172.16.1.1 | - | 1 | - | - | - |
-| PROD | 10.254.255.1/32 | 10.254.254.2 | - | 1 | - | - | - |
-| QA | 10.254.255.1/32 | 10.254.253.2 | - | 1 | - | - | - |
 
 #### Static Routes Device Configuration
 
 ```eos
 !
 ip route vrf MGMT 0.0.0.0/0 172.16.1.1
-ip route vrf PROD 10.254.255.1/32 10.254.254.2
-ip route vrf QA 10.254.255.1/32 10.254.253.2
 ```
 
 ### Router BGP
