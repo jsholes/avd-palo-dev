@@ -81,3 +81,14 @@ ntp_settings:
   server_vrf: use_mgmt_interface_vrf
   servers:
     - name: 0.pool.ntp.org
+
+
+nodes:
+- dc1-leaf2a
+custom_structured_configuration_static_routes:
+- vrf: PROD
+  destination_address_prefix: 10.254.255.1/32
+  gateway: 10.254.254.2
+- vrf: QA
+  destination_address_prefix: 10.254.255.1/32
+  gateway: 10.254.253.2  
