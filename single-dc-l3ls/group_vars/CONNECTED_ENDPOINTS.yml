@@ -17,14 +17,6 @@ servers:
         native_vlan: 4092
         # L2 mode of the port.
         mode: trunk
-        # Spanning tree portfast configuration on this port.
-        spanning_tree_portfast: edge
-        # Definition of the pair of ports as port channel.
-        port_channel:
-          # Description of the port channel interface.
-          description: PortChannel dc1-leaf1-server1
-          # Port channel mode for LACP.
-          mode: active
 
       - endpoint_ports: [ iLO ]
         switch_ports: [ Ethernet5 ]
@@ -38,13 +30,31 @@ servers:
       - endpoint_ports: [ Eth5, Eth6 ]
         switch_ports: [ Ethernet5, Ethernet5 ]
         switches: [ dc1-leaf2a, dc1-leaf2b ]
-        native_vlan: 4092
         mode: trunk
         spanning_tree_portfast: edge
-
+  
       - endpoint_ports: [ iLO ]
         switch_ports: [ Ethernet5 ]
         switches: [ dc1-leaf2c ]
         vlans: 11
         mode: access
+        spanning_tree_portfast: edge
+
+  - name: dc1-leaf1a-vpc11
+    adapters:
+      - endpoint_ports: [ eth1 ]
+        switch_ports: [ ethernet10 ]
+        switches: [ dc1-leaf1a ]
+        mode: access
+        vlans: 11
+        spanning_tree_portfast: edge
+        description: Access Port towards VPC11
+
+  - name: dc1-leaf2a-vpc13
+    adapters:
+      - endpoint_ports: [ Eth1 ]
+        switch_ports: [ Ethernet10 ]
+        switches: [ dc1-leaf2a ]
+        mode: access
+        vlans: 13
         spanning_tree_portfast: edge

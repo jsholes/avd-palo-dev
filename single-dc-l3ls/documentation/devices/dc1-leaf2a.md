@@ -377,8 +377,9 @@ vlan 4094
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
 | Ethernet3 | MLAG_PEER_dc1-leaf2b_Ethernet3 | *trunk | *- | *- | *['LEAF_PEER_L3', 'MLAG'] | 3 |
 | Ethernet4 | MLAG_PEER_dc1-leaf2b_Ethernet4 | *trunk | *- | *- | *['LEAF_PEER_L3', 'MLAG'] | 3 |
-| Ethernet5 |  dc1-leaf2-fw1_Eth5 | trunk | - | 4092 | - | - |
+| Ethernet5 |  dc1-leaf2-fw1_Eth5 | trunk | - | - | - | - |
 | Ethernet8 | DC1-LEAF2C_Ethernet1 | *trunk | *11-16,21-26,1000-1002,3401-3406 | *- | *- | 8 |
+| Ethernet10 |  dc1-leaf2a-vpc13_Eth1 | access | 13 | - | - | - |
 
 *Inherited from Port-Channel Interface
 
@@ -420,7 +421,6 @@ interface Ethernet4
 interface Ethernet5
    description dc1-leaf2-fw1_Eth5
    no shutdown
-   switchport trunk native vlan 4092
    switchport mode trunk
    switchport
    spanning-tree portfast
@@ -429,6 +429,14 @@ interface Ethernet8
    description DC1-LEAF2C_Ethernet1
    no shutdown
    channel-group 8 mode active
+!
+interface Ethernet10
+   description dc1-leaf2a-vpc13_Eth1
+   no shutdown
+   switchport access vlan 13
+   switchport mode access
+   switchport
+   spanning-tree portfast
 ```
 
 ### Port-Channel Interfaces

@@ -700,7 +700,16 @@ ethernet_interfaces:
   shutdown: false
   type: switched
   mode: trunk
-  native_vlan: 4092
+  spanning_tree_portfast: edge
+- name: Ethernet10
+  peer: dc1-leaf2a-vpc13
+  peer_interface: Eth1
+  peer_type: server
+  description: dc1-leaf2a-vpc13_Eth1
+  shutdown: false
+  type: switched
+  mode: access
+  vlans: '13'
   spanning_tree_portfast: edge
 mlag_configuration:
   domain_id: DC1_L3_BORDER_LEAF2
