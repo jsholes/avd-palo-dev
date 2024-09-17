@@ -1,0 +1,790 @@
+hostname: dc1-leaf1b
+is_deployed: true
+router_bgp:
+  as: '65101'
+  router_id: 10.255.0.4
+  bgp:
+    default:
+      ipv4_unicast: false
+  maximum_paths:
+    paths: 4
+    ecmp: 4
+  peer_groups:
+  - name: MLAG-IPv4-UNDERLAY-PEER
+    type: ipv4
+    remote_as: '65101'
+    next_hop_self: true
+    description: dc1-leaf1a
+    password: 4b21pAdCvWeAqpcKDFMdWw==
+    maximum_routes: 12000
+    send_community: all
+    route_map_in: RM-MLAG-PEER-IN
+  - name: IPv4-UNDERLAY-PEERS
+    type: ipv4
+    password: 7x4B4rnJhZB438m9+BrBfQ==
+    maximum_routes: 12000
+    send_community: all
+  - name: EVPN-OVERLAY-PEERS
+    type: evpn
+    update_source: Loopback0
+    bfd: true
+    password: Q4fqtbqcZ7oQuKfuWtNGRQ==
+    send_community: all
+    maximum_routes: 0
+    ebgp_multihop: 3
+  address_family_ipv4:
+    peer_groups:
+    - name: MLAG-IPv4-UNDERLAY-PEER
+      activate: true
+    - name: IPv4-UNDERLAY-PEERS
+      activate: true
+    - name: EVPN-OVERLAY-PEERS
+      activate: false
+  neighbors:
+  - ip_address: 10.255.1.96
+    peer_group: MLAG-IPv4-UNDERLAY-PEER
+    peer: dc1-leaf1a
+    description: dc1-leaf1a
+  - ip_address: 10.255.255.4
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '65100'
+    peer: dc1-spine1
+    description: dc1-spine1_Ethernet2
+  - ip_address: 10.255.255.6
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '65100'
+    peer: dc1-spine2
+    description: dc1-spine2_Ethernet2
+  - ip_address: 10.255.0.1
+    peer_group: EVPN-OVERLAY-PEERS
+    peer: dc1-spine1
+    description: dc1-spine1
+    remote_as: '65100'
+  - ip_address: 10.255.0.2
+    peer_group: EVPN-OVERLAY-PEERS
+    peer: dc1-spine2
+    description: dc1-spine2
+    remote_as: '65100'
+  redistribute_routes:
+  - source_protocol: connected
+    route_map: RM-CONN-2-BGP
+  address_family_evpn:
+    peer_groups:
+    - name: EVPN-OVERLAY-PEERS
+      activate: true
+  vrfs:
+  - name: PROD
+    router_id: 10.255.0.4
+    rd: 10.255.0.4:10
+    route_targets:
+      import:
+      - address_family: evpn
+        route_targets:
+        - '10:10'
+      export:
+      - address_family: evpn
+        route_targets:
+        - '10:10'
+    redistribute_routes:
+    - source_protocol: connected
+    - source_protocol: static
+    neighbors:
+    - ip_address: 10.255.1.96
+      peer_group: MLAG-IPv4-UNDERLAY-PEER
+  - name: QA
+    router_id: 10.255.0.4
+    rd: 10.255.0.4:12
+    route_targets:
+      import:
+      - address_family: evpn
+        route_targets:
+        - '12:12'
+      export:
+      - address_family: evpn
+        route_targets:
+        - '12:12'
+    redistribute_routes:
+    - source_protocol: connected
+    - source_protocol: static
+    neighbors:
+    - ip_address: 10.255.1.96
+      peer_group: MLAG-IPv4-UNDERLAY-PEER
+  - name: SHAREDSVCS
+    router_id: 10.255.0.4
+    rd: 10.255.0.4:14
+    route_targets:
+      import:
+      - address_family: evpn
+        route_targets:
+        - '14:14'
+      export:
+      - address_family: evpn
+        route_targets:
+        - '14:14'
+    redistribute_routes:
+    - source_protocol: connected
+    neighbors:
+    - ip_address: 10.255.1.96
+      peer_group: MLAG-IPv4-UNDERLAY-PEER
+  vlans:
+  - id: 11
+    tenant: PROD
+    rd: 10.255.0.4:10011
+    route_targets:
+      both:
+      - 10011:10011
+    redistribute_routes:
+    - learned
+  - id: 12
+    tenant: PROD
+    rd: 10.255.0.4:10012
+    route_targets:
+      both:
+      - 10012:10012
+    redistribute_routes:
+    - learned
+  - id: 21
+    tenant: PROD
+    rd: 10.255.0.4:10021
+    route_targets:
+      both:
+      - 10021:10021
+    redistribute_routes:
+    - learned
+  - id: 22
+    tenant: PROD
+    rd: 10.255.0.4:10022
+    route_targets:
+      both:
+      - 10022:10022
+    redistribute_routes:
+    - learned
+  - id: 1000
+    tenant: PROD
+    rd: 10.255.0.4:11000
+    route_targets:
+      both:
+      - 11000:11000
+    redistribute_routes:
+    - learned
+  - id: 3401
+    tenant: PROD
+    rd: 10.255.0.4:13401
+    route_targets:
+      both:
+      - 13401:13401
+    redistribute_routes:
+    - learned
+  - id: 3402
+    tenant: PROD
+    rd: 10.255.0.4:13402
+    route_targets:
+      both:
+      - 13402:13402
+    redistribute_routes:
+    - learned
+  - id: 13
+    tenant: QA
+    rd: 10.255.0.4:11013
+    route_targets:
+      both:
+      - 11013:11013
+    redistribute_routes:
+    - learned
+  - id: 14
+    tenant: QA
+    rd: 10.255.0.4:11014
+    route_targets:
+      both:
+      - 11014:11014
+    redistribute_routes:
+    - learned
+  - id: 23
+    tenant: QA
+    rd: 10.255.0.4:11023
+    route_targets:
+      both:
+      - 11023:11023
+    redistribute_routes:
+    - learned
+  - id: 24
+    tenant: QA
+    rd: 10.255.0.4:11024
+    route_targets:
+      both:
+      - 11024:11024
+    redistribute_routes:
+    - learned
+  - id: 1001
+    tenant: QA
+    rd: 10.255.0.4:12001
+    route_targets:
+      both:
+      - 12001:12001
+    redistribute_routes:
+    - learned
+  - id: 3403
+    tenant: QA
+    rd: 10.255.0.4:14403
+    route_targets:
+      both:
+      - 14403:14403
+    redistribute_routes:
+    - learned
+  - id: 3404
+    tenant: QA
+    rd: 10.255.0.4:14404
+    route_targets:
+      both:
+      - 14404:14404
+    redistribute_routes:
+    - learned
+  - id: 15
+    tenant: SHAREDSVCS
+    rd: 10.255.0.4:12015
+    route_targets:
+      both:
+      - 12015:12015
+    redistribute_routes:
+    - learned
+  - id: 16
+    tenant: SHAREDSVCS
+    rd: 10.255.0.4:12016
+    route_targets:
+      both:
+      - 12016:12016
+    redistribute_routes:
+    - learned
+  - id: 25
+    tenant: SHAREDSVCS
+    rd: 10.255.0.4:12025
+    route_targets:
+      both:
+      - 12025:12025
+    redistribute_routes:
+    - learned
+  - id: 26
+    tenant: SHAREDSVCS
+    rd: 10.255.0.4:12026
+    route_targets:
+      both:
+      - 12026:12026
+    redistribute_routes:
+    - learned
+  - id: 1002
+    tenant: SHAREDSVCS
+    rd: 10.255.0.4:13002
+    route_targets:
+      both:
+      - 13002:13002
+    redistribute_routes:
+    - learned
+  - id: 3405
+    tenant: SHAREDSVCS
+    rd: 10.255.0.4:15405
+    route_targets:
+      both:
+      - 15405:15405
+    redistribute_routes:
+    - learned
+  - id: 3406
+    tenant: SHAREDSVCS
+    rd: 10.255.0.4:15406
+    route_targets:
+      both:
+      - 15406:15406
+    redistribute_routes:
+    - learned
+static_routes:
+- vrf: MGMT
+  destination_address_prefix: 0.0.0.0/0
+  gateway: 172.16.1.1
+- destination_address_prefix: 10.254.255.1/32
+  gateway: 10.254.254.2
+  vrf: PROD
+- destination_address_prefix: 10.254.255.1/32
+  gateway: 10.254.253.2
+  vrf: QA
+service_routing_protocols_model: multi-agent
+ip_routing: true
+daemon_terminattr:
+  cvaddrs:
+  - 192.168.1.12:9910
+  cvauth:
+    method: token
+    token_file: /tmp/token
+  cvvrf: MGMT
+  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
+  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+  disable_aaa: true
+vlan_internal_order:
+  allocation: ascending
+  range:
+    beginning: 1006
+    ending: 1199
+ip_name_servers:
+- ip_address: 192.168.1.1
+  vrf: MGMT
+spanning_tree:
+  mode: mstp
+  mst_instances:
+  - id: '0'
+    priority: 4096
+  no_spanning_tree_vlan: 4093-4094
+local_users:
+- name: admin
+  privilege: 15
+  role: network-admin
+  no_password: true
+- name: ansible
+  privilege: 15
+  role: network-admin
+  sha512_password: $6$7u4j1rkb3VELgcZE$EJt2Qff8kd/TapRoci0XaIZsL4tFzgq1YZBLD9c6f/knXzvcYY0NcMKndZeCv0T268knGKhOEwZAxqKjlMm920
+vrfs:
+- name: MGMT
+  ip_routing: false
+- name: PROD
+  tenant: PROD
+  ip_routing: true
+- name: QA
+  tenant: QA
+  ip_routing: true
+- name: SHAREDSVCS
+  tenant: SHAREDSVCS
+  ip_routing: true
+management_interfaces:
+- name: Management1
+  description: oob_management
+  shutdown: false
+  vrf: MGMT
+  ip_address: 172.16.1.102/24
+  gateway: 172.16.1.1
+  type: oob
+management_api_http:
+  enable_vrfs:
+  - name: MGMT
+  enable_https: true
+ntp:
+  local_interface:
+    name: Management1
+    vrf: MGMT
+  servers:
+  - name: 0.pool.ntp.org
+    vrf: MGMT
+    preferred: true
+vlans:
+- id: 4093
+  tenant: system
+  name: LEAF_PEER_L3
+  trunk_groups:
+  - LEAF_PEER_L3
+- id: 4094
+  tenant: system
+  name: MLAG_PEER
+  trunk_groups:
+  - MLAG
+- id: 11
+  name: PROD_VLAN11
+  tenant: PROD
+- id: 12
+  name: PROD_VLAN12
+  tenant: PROD
+- id: 21
+  name: PROD_VLAN21
+  tenant: PROD
+- id: 22
+  name: PROD_VLAN22
+  tenant: PROD
+- id: 1000
+  name: PROD_FW_TRANSIT
+  tenant: PROD
+- id: 3009
+  name: MLAG_iBGP_PROD
+  trunk_groups:
+  - LEAF_PEER_L3
+  tenant: PROD
+- id: 3401
+  name: L2_VLAN3401
+  tenant: PROD
+- id: 3402
+  name: L2_VLAN3402
+  tenant: PROD
+- id: 13
+  name: QA_VLAN11
+  tenant: QA
+- id: 14
+  name: QA_VLAN12
+  tenant: QA
+- id: 23
+  name: QA_VLAN21
+  tenant: QA
+- id: 24
+  name: QA_VLAN22
+  tenant: QA
+- id: 1001
+  name: QA_FW_TRANSIT
+  tenant: QA
+- id: 3011
+  name: MLAG_iBGP_QA
+  trunk_groups:
+  - LEAF_PEER_L3
+  tenant: QA
+- id: 3403
+  name: L2_VLAN3403
+  tenant: QA
+- id: 3404
+  name: L2_VLAN3404
+  tenant: QA
+- id: 15
+  name: SHAREDSVCS_VLAN11
+  tenant: SHAREDSVCS
+- id: 16
+  name: SHAREDSVCS_VLAN12
+  tenant: SHAREDSVCS
+- id: 25
+  name: SHAREDSVCS_VLAN21
+  tenant: SHAREDSVCS
+- id: 26
+  name: SHAREDSVCS_VLAN22
+  tenant: SHAREDSVCS
+- id: 1002
+  name: SHAREDSVCS_FW_TRANSIT
+  tenant: SHAREDSVCS
+- id: 3013
+  name: MLAG_iBGP_SHAREDSVCS
+  trunk_groups:
+  - LEAF_PEER_L3
+  tenant: SHAREDSVCS
+- id: 3405
+  name: L2_VLAN3405
+  tenant: SHAREDSVCS
+- id: 3406
+  name: L2_VLAN3406
+  tenant: SHAREDSVCS
+vlan_interfaces:
+- name: Vlan4093
+  description: MLAG_PEER_L3_PEERING
+  shutdown: false
+  mtu: 1500
+  ip_address: 10.255.1.97/31
+- name: Vlan4094
+  description: MLAG_PEER
+  shutdown: false
+  no_autostate: true
+  mtu: 1500
+  ip_address: 10.255.1.65/31
+- name: Vlan11
+  tenant: PROD
+  description: PROD_VLAN11
+  shutdown: false
+  ip_address_virtual: 10.10.11.1/24
+  vrf: PROD
+- name: Vlan12
+  tenant: PROD
+  description: PROD_VLAN12
+  shutdown: false
+  ip_address_virtual: 10.10.12.1/24
+  vrf: PROD
+- name: Vlan21
+  tenant: PROD
+  description: PROD_VLAN21
+  shutdown: false
+  ip_address_virtual: 10.10.21.1/24
+  vrf: PROD
+- name: Vlan22
+  tenant: PROD
+  description: PROD_VLAN22
+  shutdown: false
+  ip_address_virtual: 10.10.22.1/24
+  vrf: PROD
+- name: Vlan1000
+  tenant: PROD
+  description: PROD_FW_TRANSIT
+  shutdown: false
+  ip_address_virtual: 10.254.254.1/24
+  vrf: PROD
+- name: Vlan3009
+  tenant: PROD
+  type: underlay_peering
+  shutdown: false
+  description: 'MLAG_PEER_L3_iBGP: vrf PROD'
+  vrf: PROD
+  mtu: 1500
+  ip_address: 10.255.1.97/31
+- name: Vlan13
+  tenant: QA
+  description: QA_VLAN11
+  shutdown: false
+  ip_address_virtual: 10.11.11.1/24
+  vrf: QA
+- name: Vlan14
+  tenant: QA
+  description: QA_VLAN12
+  shutdown: false
+  ip_address_virtual: 10.11.12.1/24
+  vrf: QA
+- name: Vlan23
+  tenant: QA
+  description: QA_VLAN21
+  shutdown: false
+  ip_address_virtual: 10.11.21.1/24
+  vrf: QA
+- name: Vlan24
+  tenant: QA
+  description: QA_VLAN22
+  shutdown: false
+  ip_address_virtual: 10.11.22.1/24
+  vrf: QA
+- name: Vlan1001
+  tenant: QA
+  description: QA_FW_TRANSIT
+  shutdown: false
+  ip_address_virtual: 10.254.253.1/24
+  vrf: QA
+- name: Vlan3011
+  tenant: QA
+  type: underlay_peering
+  shutdown: false
+  description: 'MLAG_PEER_L3_iBGP: vrf QA'
+  vrf: QA
+  mtu: 1500
+  ip_address: 10.255.1.97/31
+- name: Vlan15
+  tenant: SHAREDSVCS
+  description: SHAREDSVCS_VLAN11
+  shutdown: false
+  ip_address_virtual: 10.12.11.1/24
+  vrf: SHAREDSVCS
+- name: Vlan16
+  tenant: SHAREDSVCS
+  description: SHAREDSVCS_VLAN12
+  shutdown: false
+  ip_address_virtual: 10.12.12.1/24
+  vrf: SHAREDSVCS
+- name: Vlan25
+  tenant: SHAREDSVCS
+  description: SHAREDSVCS_VLAN21
+  shutdown: false
+  ip_address_virtual: 10.12.21.1/24
+  vrf: SHAREDSVCS
+- name: Vlan26
+  tenant: SHAREDSVCS
+  description: SHAREDSVCS_VLAN22
+  shutdown: false
+  ip_address_virtual: 10.12.22.1/24
+  vrf: SHAREDSVCS
+- name: Vlan1002
+  tenant: SHAREDSVCS
+  description: SHAREDSVCS_FW_TRANSIT
+  shutdown: false
+  ip_address_virtual: 10.254.252.1/24
+  vrf: SHAREDSVCS
+- name: Vlan3013
+  tenant: SHAREDSVCS
+  type: underlay_peering
+  shutdown: false
+  description: 'MLAG_PEER_L3_iBGP: vrf SHAREDSVCS'
+  vrf: SHAREDSVCS
+  mtu: 1500
+  ip_address: 10.255.1.97/31
+port_channel_interfaces:
+- name: Port-Channel3
+  description: MLAG_PEER_dc1-leaf1a_Po3
+  type: switched
+  shutdown: false
+  mode: trunk
+  trunk_groups:
+  - LEAF_PEER_L3
+  - MLAG
+- name: Port-Channel8
+  description: DC1-LEAF1C_Po1
+  type: switched
+  shutdown: false
+  mode: trunk
+  vlans: 11-16,21-26,1000-1002,3401-3406
+  mlag: 8
+ethernet_interfaces:
+- name: Ethernet3
+  peer: dc1-leaf1a
+  peer_interface: Ethernet3
+  peer_type: mlag_peer
+  description: MLAG_PEER_dc1-leaf1a_Ethernet3
+  type: port-channel-member
+  shutdown: false
+  channel_group:
+    id: 3
+    mode: active
+- name: Ethernet4
+  peer: dc1-leaf1a
+  peer_interface: Ethernet4
+  peer_type: mlag_peer
+  description: MLAG_PEER_dc1-leaf1a_Ethernet4
+  type: port-channel-member
+  shutdown: false
+  channel_group:
+    id: 3
+    mode: active
+- name: Ethernet1
+  peer: dc1-spine1
+  peer_interface: Ethernet2
+  peer_type: spine
+  description: P2P_LINK_TO_DC1-SPINE1_Ethernet2
+  shutdown: false
+  mtu: 1500
+  type: routed
+  ip_address: 10.255.255.5/31
+- name: Ethernet2
+  peer: dc1-spine2
+  peer_interface: Ethernet2
+  peer_type: spine
+  description: P2P_LINK_TO_DC1-SPINE2_Ethernet2
+  shutdown: false
+  mtu: 1500
+  type: routed
+  ip_address: 10.255.255.7/31
+- name: Ethernet8
+  peer: dc1-leaf1c
+  peer_interface: Ethernet2
+  peer_type: l2leaf
+  description: DC1-LEAF1C_Ethernet2
+  shutdown: false
+  type: port-channel-member
+  channel_group:
+    id: 8
+    mode: active
+- name: Ethernet5
+  peer: dc1-leaf1-server1
+  peer_interface: PCI2
+  peer_type: server
+  description: dc1-leaf1-server1_PCI2
+  shutdown: false
+  type: switched
+  mode: trunk
+  vlans: 11-12,21-22,1000-1002
+  native_vlan: 4092
+mlag_configuration:
+  domain_id: DC1_L3_LEAF1
+  local_interface: Vlan4094
+  peer_address: 10.255.1.64
+  peer_link: Port-Channel3
+  reload_delay_mlag: '300'
+  reload_delay_non_mlag: '330'
+route_maps:
+- name: RM-MLAG-PEER-IN
+  sequence_numbers:
+  - sequence: 10
+    type: permit
+    set:
+    - origin incomplete
+    description: Make routes learned over MLAG Peer-link less preferred on spines to ensure optimal routing
+- name: RM-CONN-2-BGP
+  sequence_numbers:
+  - sequence: 10
+    type: permit
+    match:
+    - ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+loopback_interfaces:
+- name: Loopback0
+  description: EVPN_Overlay_Peering
+  shutdown: false
+  ip_address: 10.255.0.4/32
+- name: Loopback1
+  description: VTEP_VXLAN_Tunnel_Source
+  shutdown: false
+  ip_address: 10.255.1.3/32
+- name: Loopback10
+  description: PROD_VTEP_DIAGNOSTICS
+  shutdown: false
+  vrf: PROD
+  ip_address: 10.255.10.4/32
+- name: Loopback12
+  description: QA_VTEP_DIAGNOSTICS
+  shutdown: false
+  vrf: QA
+  ip_address: 10.255.12.4/32
+- name: Loopback14
+  description: SHAREDSVCS_VTEP_DIAGNOSTICS
+  shutdown: false
+  vrf: SHAREDSVCS
+  ip_address: 10.255.14.4/32
+prefix_lists:
+- name: PL-LOOPBACKS-EVPN-OVERLAY
+  sequence_numbers:
+  - sequence: 10
+    action: permit 10.255.0.0/27 eq 32
+  - sequence: 20
+    action: permit 10.255.1.0/27 eq 32
+router_bfd:
+  multihop:
+    interval: 300
+    min_rx: 300
+    multiplier: 3
+ip_igmp_snooping:
+  globally_enabled: true
+ip_virtual_router_mac_address: 00:1c:73:00:00:99
+vxlan_interface:
+  Vxlan1:
+    description: dc1-leaf1b_VTEP
+    vxlan:
+      udp_port: 4789
+      source_interface: Loopback1
+      virtual_router_encapsulation_mac_address: mlag-system-id
+      vlans:
+      - id: 11
+        vni: 10011
+      - id: 12
+        vni: 10012
+      - id: 21
+        vni: 10021
+      - id: 22
+        vni: 10022
+      - id: 1000
+        vni: 11000
+      - id: 3401
+        vni: 13401
+      - id: 3402
+        vni: 13402
+      - id: 13
+        vni: 11013
+      - id: 14
+        vni: 11014
+      - id: 23
+        vni: 11023
+      - id: 24
+        vni: 11024
+      - id: 1001
+        vni: 12001
+      - id: 3403
+        vni: 14403
+      - id: 3404
+        vni: 14404
+      - id: 15
+        vni: 12015
+      - id: 16
+        vni: 12016
+      - id: 25
+        vni: 12025
+      - id: 26
+        vni: 12026
+      - id: 1002
+        vni: 13002
+      - id: 3405
+        vni: 15405
+      - id: 3406
+        vni: 15406
+      vrfs:
+      - name: PROD
+        vni: 10
+      - name: QA
+        vni: 12
+      - name: SHAREDSVCS
+        vni: 14
+virtual_source_nat_vrfs:
+- name: PROD
+  ip_address: 10.255.10.4
+- name: QA
+  ip_address: 10.255.12.4
+- name: SHAREDSVCS
+  ip_address: 10.255.14.4
+metadata:
+  platform: vEOS-lab

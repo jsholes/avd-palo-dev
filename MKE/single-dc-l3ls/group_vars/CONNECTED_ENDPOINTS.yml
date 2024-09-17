@@ -1,0 +1,60 @@
+---
+# Definition of connected endpoints in the fabric.
+servers:
+  # Name of the defined server.
+  - name: dc1-leaf1-server1
+    # Definition of adapters on the server.
+    adapters:
+        # Name of the server interfaces that will be used in the description of each interface
+      - endpoint_ports: [ PCI1, PCI2 ]
+        # Device ports where the server ports are connected.
+        switch_ports: [ Ethernet5, Ethernet5 ]
+        # Device names where the server ports are connected.
+        switches: [ dc1-leaf1a, dc1-leaf1b ]
+        # VLANs that will be configured on these ports.
+        vlans: 11-12,21-22,1000-1002
+        # Native VLAN to be used on these ports.
+        native_vlan: 4092
+        # L2 mode of the port.
+        mode: trunk
+
+      - endpoint_ports: [ iLO ]
+        switch_ports: [ Ethernet5 ]
+        switches: [ dc1-leaf1c ]
+        vlans: 11
+        mode: access
+        spanning_tree_portfast: edge
+
+  - name: dc1-leaf2-fw1
+    adapters:
+      - endpoint_ports: [ Eth5, Eth6 ]
+        switch_ports: [ Ethernet5, Ethernet5 ]
+        switches: [ dc1-leaf2a, dc1-leaf2b ]
+        mode: trunk
+        spanning_tree_portfast: edge
+  
+      - endpoint_ports: [ iLO ]
+        switch_ports: [ Ethernet5 ]
+        switches: [ dc1-leaf2c ]
+        vlans: 11
+        mode: access
+        spanning_tree_portfast: edge
+
+  - name: dc1-leaf1a-vpc11
+    adapters:
+      - endpoint_ports: [ eth1 ]
+        switch_ports: [ ethernet10 ]
+        switches: [ dc1-leaf1a ]
+        mode: access
+        vlans: 11
+        spanning_tree_portfast: edge
+        description: Access Port towards VPC11
+
+  - name: dc1-leaf2a-vpc13
+    adapters:
+      - endpoint_ports: [ Eth1 ]
+        switch_ports: [ Ethernet10 ]
+        switches: [ dc1-leaf2a ]
+        mode: access
+        vlans: 13
+        spanning_tree_portfast: edge
